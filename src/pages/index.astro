@@ -1,0 +1,199 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CostCalculator from '../components/CostCalculator';
+import { business } from '../data/business';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': `${business.url}/#business`,
+    name: business.name,
+    legalName: business.legalName,
+    description: business.description,
+    url: business.url,
+    telephone: business.phone,
+    email: business.email,
+    foundingDate: `${business.foundingYear}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: business.address.street,
+      addressLocality: business.address.city,
+      addressRegion: business.address.state,
+      postalCode: business.address.zip,
+      addressCountry: business.address.country,
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: business.geo.lat,
+      longitude: business.geo.lng,
+    },
+    openingHoursSpecification: business.openingHours.map(h => {
+      const [days, hours] = h.split(' ');
+      const [open, close] = hours.split('-');
+      return {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: days.split('-').map(d => {
+          const map: Record<string, string> = { Mo: 'Monday', Tu: 'Tuesday', We: 'Wednesday', Th: 'Thursday', Fr: 'Friday', Sa: 'Saturday', Su: 'Sunday' };
+          return map[d];
+        }),
+        opens: open,
+        closes: close,
+      };
+    }),
+    sameAs: business.socialProfiles,
+    areaServed: business.serviceArea.map(area => ({
+      '@type': 'City',
+      name: area,
+    })),
+    priceRange: '$$',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: business.name,
+    url: business.url,
+  },
+];
+---
+
+<BaseLayout
+  title={`${business.name} | Professional Painting Services in ${business.address.city}, ${business.address.state}`}
+  description={business.description}
+  schema={schema}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <h1>Professional Painting Services in {business.address.city}</h1>
+      <p class="hero-sub">
+        Trusted by homeowners and businesses since {business.foundingYear}.
+        Interior, exterior, and specialty coatings delivered on time and on budget.
+      </p>
+      <div class="hero-actions">
+        <a href="/contact" class="btn">Get a Free Quote</a>
+        <a href="/services/interior-painting" class="btn btn-outline">Our Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="container">
+      <h2>Our Painting Services</h2>
+      <p style="margin-bottom: 2rem; color: var(--color-text-light);">
+        From single rooms to full commercial projects, we deliver flawless results.
+      </p>
+      <div class="services-grid">
+        <a href="/services/interior-painting" class="service-card">
+          <h3>Interior Painting</h3>
+          <p>Walls, ceilings, trim, and accent features. Low-VOC paints, clean edges, furniture protection included.</p>
+        </a>
+        <a href="/services/exterior-painting" class="service-card">
+          <h3>Exterior Painting</h3>
+          <p>Siding, fascia, doors, and decks. Full power-wash prep, primer, and weather-resistant top coats.</p>
+        </a>
+        <a href="/contact" class="service-card">
+          <h3>Cabinet Refinishing</h3>
+          <p>Kitchen and bathroom cabinets sprayed to a factory finish without the cost of full replacement.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="section section-alt">
+    <div class="container">
+      <h2>Estimate Your Project Cost</h2>
+      <p style="margin-bottom: 2rem; color: var(--color-text-light);">
+        Use our calculator for a quick ballpark. Then schedule a free on-site quote for an exact price.
+      </p>
+      <CostCalculator client:visible />
+    </div>
+  </section>
+
+  <!-- Service Areas -->
+  <section class="section">
+    <div class="container">
+      <h2>Areas We Serve</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--color-text-light);">
+        Proudly serving {business.address.city} and surrounding communities.
+      </p>
+      <div class="areas-list">
+        {business.serviceArea.map(area => (
+          <a href={`/areas/${area.toLowerCase().replace(/\s+/g, '-')}`} class="area-tag">
+            {area}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-alt" style="text-align: center;">
+    <div class="container">
+      <h2>Ready to Transform Your Space?</h2>
+      <p style="max-width: 560px; margin: 0 auto 1.5rem; color: var(--color-text-light);">
+        Contact us for a free, no-obligation estimate. We respond within 24 hours.
+      </p>
+      <a href="/contact" class="btn">Request a Free Quote</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: #fff;
+    padding: 5rem 0;
+  }
+
+  .hero h1 { color: #fff; font-size: 2.75rem; max-width: 700px; }
+  .hero-sub { color: rgba(255,255,255,0.85); font-size: 1.15rem; max-width: 600px; margin-bottom: 2rem; }
+
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.6);
+    color: #fff;
+  }
+  .btn-outline:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.75rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: block;
+  }
+  .service-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+  .service-card p { color: var(--color-text-light); font-size: 0.95rem; }
+
+  .areas-list { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .area-tag {
+    padding: 0.5rem 1.25rem;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .area-tag:hover { background: var(--color-primary); color: #fff; }
+
+  @media (max-width: 768px) {
+    .hero { padding: 3rem 0; }
+    .hero h1 { font-size: 1.75rem; }
+  }
+</style>

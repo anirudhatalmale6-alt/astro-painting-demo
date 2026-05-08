@@ -1,0 +1,134 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { business } from '../../data/business';
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Exterior Painting',
+  description: `Professional exterior painting services in ${business.address.city}. Siding, trim, decks, and fences by ${business.name}.`,
+  provider: {
+    '@type': 'LocalBusiness',
+    '@id': `${business.url}/#business`,
+    name: business.name,
+  },
+  areaServed: business.serviceArea.map(area => ({
+    '@type': 'City',
+    name: area,
+  })),
+  serviceType: 'Exterior Painting',
+};
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: business.url },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${business.url}/services` },
+    { '@type': 'ListItem', position: 3, name: 'Exterior Painting', item: `${business.url}/services/exterior-painting` },
+  ],
+};
+---
+
+<BaseLayout
+  title={`Exterior Painting Services | ${business.name} - ${business.address.city}, ${business.address.state}`}
+  description={`Professional exterior painting in ${business.address.city}. Siding, trim, decks, doors, and fences. Includes power washing and prep. Free estimates from ${business.name}.`}
+  schema={[serviceSchema, breadcrumb]}
+>
+  <section class="section">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a> &raquo;
+        <a href="/services/exterior-painting">Services</a> &raquo;
+        <span>Exterior Painting</span>
+      </nav>
+
+      <h1>Exterior Painting Services in {business.address.city}</h1>
+      <p class="intro">
+        Your home's exterior is its first impression. {business.name} uses premium,
+        weather-resistant coatings and thorough surface preparation to protect your
+        investment and boost curb appeal.
+      </p>
+
+      <h2>What We Paint</h2>
+      <div class="cards-row">
+        <div class="card">
+          <h3>Siding &amp; Walls</h3>
+          <p>Wood, fiber cement, stucco, brick, and vinyl siding. Power-washed, primed, and painted with 2+ coats.</p>
+        </div>
+        <div class="card">
+          <h3>Trim &amp; Fascia</h3>
+          <p>Window frames, door frames, eaves, fascia boards, and soffits. Hand-brushed for precision.</p>
+        </div>
+        <div class="card">
+          <h3>Decks &amp; Fences</h3>
+          <p>Staining and sealing for wood decks, pergolas, and fences. UV and moisture protection.</p>
+        </div>
+      </div>
+
+      <h2>Our Exterior Process</h2>
+      <ol class="process-list">
+        <li><strong>Inspection</strong> &mdash; We check for rot, peeling, caulk failure, and moisture damage before quoting.</li>
+        <li><strong>Power washing</strong> &mdash; Remove dirt, mildew, and loose paint for proper adhesion.</li>
+        <li><strong>Repair &amp; prep</strong> &mdash; Replace rotted wood, scrape, sand, caulk gaps, and prime bare surfaces.</li>
+        <li><strong>Painting</strong> &mdash; Spray or brush/roll depending on the surface. Two coats of 100% acrylic latex for maximum durability.</li>
+        <li><strong>Cleanup &amp; walkthrough</strong> &mdash; Landscaping uncovered, site cleaned, and final inspection with you.</li>
+      </ol>
+
+      <div class="cta-bar">
+        <h2>Get a Free Exterior Painting Estimate</h2>
+        <p>We'll inspect your home's exterior, recommend the right prep and products, and provide a detailed written quote.</p>
+        <a href="/contact" class="btn">Request a Free Quote</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 1.5rem;
+  }
+  .breadcrumbs a { color: var(--color-primary); }
+
+  .intro {
+    font-size: 1.1rem;
+    max-width: 700px;
+    color: var(--color-text-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .card p { color: var(--color-text-light); font-size: 0.95rem; }
+
+  .process-list {
+    padding-left: 1.25rem;
+    margin-bottom: 3rem;
+    max-width: 700px;
+  }
+  .process-list li { margin-bottom: 0.75rem; color: var(--color-text-light); }
+
+  .cta-bar {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 2.5rem;
+    text-align: center;
+  }
+  .cta-bar p { color: var(--color-text-light); max-width: 500px; margin: 0 auto 1.5rem; }
+</style>

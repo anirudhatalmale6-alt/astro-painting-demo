@@ -1,0 +1,102 @@
+---
+import { business } from '../data/business';
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/services/interior-painting', label: 'Interior' },
+  { href: '/services/exterior-painting', label: 'Exterior' },
+  { href: '/areas/austin', label: 'Austin' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <span class="logo-icon">&#9608;</span>
+      {business.name}
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <ul>
+        {navLinks.map(link => (
+          <li>
+            <a
+              href={link.href}
+              class:list={[{ active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <a href={`tel:${business.phone}`} class="header-cta btn">{business.phone}</a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-primary);
+    padding: 0.75rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .logo {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .logo:hover { color: var(--color-accent); }
+
+  .logo-icon { color: var(--color-accent); }
+
+  .main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 0.25rem;
+  }
+
+  .main-nav a {
+    color: rgba(255,255,255,0.85);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .main-nav a:hover,
+  .main-nav a.active {
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .header-cta {
+    font-size: 0.85rem;
+    padding: 0.5rem 1.25rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .header-inner { flex-wrap: wrap; }
+    .main-nav ul { flex-wrap: wrap; gap: 0; }
+    .header-cta { display: none; }
+  }
+</style>

@@ -1,0 +1,145 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { business } from '../data/business';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  mainEntity: {
+    '@type': 'LocalBusiness',
+    '@id': `${business.url}/#business`,
+    name: business.name,
+  },
+};
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: business.url },
+    { '@type': 'ListItem', position: 2, name: 'About Us', item: `${business.url}/about` },
+  ],
+};
+---
+
+<BaseLayout
+  title={`About ${business.name} | ${business.address.city} Painters Since ${business.foundingYear}`}
+  description={`Learn about ${business.name}, a family-owned painting company serving ${business.address.city} and surrounding areas since ${business.foundingYear}.`}
+  schema={[schema, breadcrumb]}
+>
+  <section class="section">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a> &raquo; <span>About Us</span>
+      </nav>
+
+      <h1>About {business.name}</h1>
+      <p class="intro">
+        Founded in {business.foundingYear}, {business.name} has grown from a two-person crew
+        to one of {business.address.city}'s most trusted painting contractors. We combine
+        old-school craftsmanship with modern materials and techniques to deliver finishes
+        that last.
+      </p>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <h3>Our Mission</h3>
+          <p>
+            To deliver exceptional painting results through honest communication,
+            meticulous preparation, and premium materials. Every project gets our full attention,
+            from the initial color consultation to the final walk-through.
+          </p>
+        </div>
+
+        <div class="about-card">
+          <h3>Why Choose Us</h3>
+          <ul>
+            <li>Licensed, bonded, and fully insured</li>
+            <li>Background-checked, trained crews</li>
+            <li>Premium paints from Sherwin-Williams &amp; Benjamin Moore</li>
+            <li>2-year workmanship warranty</li>
+            <li>Detailed written estimates, no surprise charges</li>
+          </ul>
+        </div>
+
+        <div class="about-card">
+          <h3>By the Numbers</h3>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-value">{new Date().getFullYear() - business.foundingYear}+</span>
+              <span class="stat-label">Years in Business</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">2,500+</span>
+              <span class="stat-label">Projects Completed</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">4.9</span>
+              <span class="stat-label">Google Rating</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="/contact" class="btn">Contact Us Today</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 1.5rem;
+  }
+  .breadcrumbs a { color: var(--color-primary); }
+
+  .intro {
+    font-size: 1.1rem;
+    max-width: 700px;
+    color: var(--color-text-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .about-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.75rem;
+  }
+
+  .about-card ul {
+    padding-left: 1.25rem;
+    color: var(--color-text-light);
+  }
+  .about-card li { margin-bottom: 0.4rem; }
+
+  .stats {
+    display: flex;
+    gap: 1.5rem;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+  }
+</style>

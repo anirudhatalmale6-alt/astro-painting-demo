@@ -1,0 +1,190 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { business } from '../../data/business';
+
+const areaName = 'Austin';
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: `Painting Services in ${areaName}`,
+  description: `Professional residential and commercial painting in ${areaName}, TX. Interior and exterior painting by ${business.name}.`,
+  provider: {
+    '@type': 'LocalBusiness',
+    '@id': `${business.url}/#business`,
+    name: business.name,
+  },
+  areaServed: {
+    '@type': 'City',
+    name: areaName,
+    containedInPlace: {
+      '@type': 'State',
+      name: 'Texas',
+    },
+  },
+};
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: business.url },
+    { '@type': 'ListItem', position: 2, name: 'Service Areas', item: `${business.url}/areas` },
+    { '@type': 'ListItem', position: 3, name: areaName, item: `${business.url}/areas/austin` },
+  ],
+};
+---
+
+<BaseLayout
+  title={`Painters in ${areaName}, TX | ${business.name} - Interior & Exterior`}
+  description={`Looking for painters in ${areaName}? ${business.name} provides interior and exterior painting services in ${areaName} and surrounding areas. Free estimates. Call ${business.phone}.`}
+  schema={[serviceSchema, breadcrumb]}
+>
+  <section class="section">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a> &raquo;
+        <a href="/areas/austin">Service Areas</a> &raquo;
+        <span>{areaName}</span>
+      </nav>
+
+      <h1>Painting Services in {areaName}, TX</h1>
+      <p class="intro">
+        {business.name} has been serving {areaName} homeowners and businesses since {business.foundingYear}.
+        From the bungalows of Travis Heights to the new builds in Mueller, we know the local architecture
+        and the paints that hold up in Central Texas heat.
+      </p>
+
+      <div class="two-col">
+        <div>
+          <h2>Services Available in {areaName}</h2>
+          <ul class="service-links">
+            <li><a href="/services/interior-painting">Interior Painting</a> &mdash; Walls, ceilings, trim, accent walls</li>
+            <li><a href="/services/exterior-painting">Exterior Painting</a> &mdash; Siding, fascia, decks, doors</li>
+            <li><a href="/contact">Cabinet Refinishing</a> &mdash; Kitchen and bathroom cabinets</li>
+            <li><a href="/contact">Commercial Painting</a> &mdash; Offices, retail, HOA common areas</li>
+          </ul>
+
+          <h2>Neighborhoods We Serve in {areaName}</h2>
+          <div class="neighborhood-tags">
+            {['Downtown', 'South Congress', 'East Austin', 'Mueller', 'Travis Heights',
+              'Zilker', 'Tarrytown', 'Hyde Park', 'Crestview', 'North Loop'].map(n => (
+              <span class="tag">{n}</span>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2>Why {areaName} Homeowners Choose Us</h2>
+          <ul class="reasons">
+            <li>Local team &mdash; no subcontractors</li>
+            <li>Heat-resistant exterior coatings rated for Texas summers</li>
+            <li>Flexible scheduling around your routine</li>
+            <li>Licensed and insured in Travis County</li>
+            <li>2-year workmanship warranty</li>
+          </ul>
+
+          <div class="geo-cta">
+            <h3>Get a Free Quote in {areaName}</h3>
+            <p>Call <a href={`tel:${business.phone}`}>{business.phone}</a> or fill out our <a href="/contact">contact form</a>. We typically respond within a few hours for {areaName} requests.</p>
+            <a href="/contact" class="btn">Request a Free Estimate</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="other-areas">
+        <h3>Other Areas We Serve</h3>
+        <div class="area-links">
+          {business.serviceArea.filter(a => a !== areaName).map(area => (
+            <a href={`/areas/${area.toLowerCase().replace(/\s+/g, '-')}`}>{area}</a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 1.5rem;
+  }
+  .breadcrumbs a { color: var(--color-primary); }
+
+  .intro {
+    font-size: 1.1rem;
+    max-width: 700px;
+    color: var(--color-text-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .service-links {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+  }
+  .service-links li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-light);
+  }
+
+  .neighborhood-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag {
+    padding: 0.35rem 0.75rem;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    font-size: 0.85rem;
+  }
+
+  .reasons {
+    padding-left: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .reasons li { margin-bottom: 0.5rem; color: var(--color-text-light); }
+
+  .geo-cta {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.75rem;
+  }
+  .geo-cta p { color: var(--color-text-light); margin-bottom: 1rem; }
+
+  .other-areas {
+    border-top: 1px solid var(--color-border);
+    padding-top: 2rem;
+  }
+  .area-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .area-links a {
+    padding: 0.5rem 1.25rem;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+  .area-links a:hover { background: var(--color-primary); color: #fff; }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>

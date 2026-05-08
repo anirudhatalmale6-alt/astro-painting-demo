@@ -1,0 +1,202 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CostCalculator from '../../components/CostCalculator';
+import { business } from '../../data/business';
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Interior Painting',
+  description: `Professional interior painting services in ${business.address.city}. Walls, ceilings, trim, accent walls, and cabinet painting by ${business.name}.`,
+  provider: {
+    '@type': 'LocalBusiness',
+    '@id': `${business.url}/#business`,
+    name: business.name,
+  },
+  areaServed: business.serviceArea.map(area => ({
+    '@type': 'City',
+    name: area,
+  })),
+  serviceType: 'Interior Painting',
+};
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: business.url },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${business.url}/services` },
+    { '@type': 'ListItem', position: 3, name: 'Interior Painting', item: `${business.url}/services/interior-painting` },
+  ],
+};
+
+const faq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How long does it take to paint the interior of a house?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A typical 3-bedroom home takes 3-5 days depending on prep work, number of colors, and ceiling height. We provide a detailed timeline in your estimate.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to move my furniture before painting?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Our crew moves and covers all furniture before starting. We place drop cloths over floors and tape off fixtures. Everything is returned to its original position when we finish.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What type of paint do you use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We use premium paints from Sherwin-Williams and Benjamin Moore. All interior paints are low-VOC for minimal odor and faster reoccupancy.',
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={`Interior Painting Services | ${business.name} - ${business.address.city}, ${business.address.state}`}
+  description={`Professional interior painting in ${business.address.city}. Walls, ceilings, trim, and accent walls. Free estimates from ${business.name}. Call ${business.phone}.`}
+  schema={[serviceSchema, breadcrumb, faq]}
+>
+  <section class="section">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a> &raquo;
+        <a href="/services/interior-painting">Services</a> &raquo;
+        <span>Interior Painting</span>
+      </nav>
+
+      <h1>Interior Painting Services in {business.address.city}</h1>
+      <p class="intro">
+        A fresh coat of paint is the fastest way to transform any room.
+        {business.name} delivers smooth, even finishes with minimal disruption
+        to your daily routine.
+      </p>
+
+      <div class="content-grid">
+        <div class="content-main">
+          <h2>What We Paint</h2>
+          <ul class="feature-list">
+            <li>Living rooms, bedrooms, and hallways</li>
+            <li>Kitchens and bathrooms (moisture-resistant finishes)</li>
+            <li>Ceilings and crown molding</li>
+            <li>Trim, baseboards, and doors</li>
+            <li>Accent walls and feature walls</li>
+            <li>Stairwells and high-ceiling areas</li>
+          </ul>
+
+          <h2>Our Process</h2>
+          <ol class="process-list">
+            <li><strong>Free consultation</strong> &mdash; We visit your home, discuss colors, and provide a written estimate.</li>
+            <li><strong>Preparation</strong> &mdash; Furniture moved, surfaces cleaned, holes patched, trim taped.</li>
+            <li><strong>Priming</strong> &mdash; Stain-blocking primer on new drywall, repaired areas, and dark-to-light transitions.</li>
+            <li><strong>Painting</strong> &mdash; Two coats minimum using brush, roller, or spray depending on the surface.</li>
+            <li><strong>Walk-through</strong> &mdash; We inspect every surface with you before final sign-off.</li>
+          </ol>
+
+          <h2>Frequently Asked Questions</h2>
+          <div class="faq-list">
+            <details>
+              <summary>How long does it take to paint the interior of a house?</summary>
+              <p>A typical 3-bedroom home takes 3-5 days depending on prep work, number of colors, and ceiling height. We provide a detailed timeline in your estimate.</p>
+            </details>
+            <details>
+              <summary>Do I need to move my furniture before painting?</summary>
+              <p>No. Our crew moves and covers all furniture before starting. We place drop cloths over floors and tape off fixtures. Everything is returned to its original position when we finish.</p>
+            </details>
+            <details>
+              <summary>What type of paint do you use?</summary>
+              <p>We use premium paints from Sherwin-Williams and Benjamin Moore. All interior paints are low-VOC for minimal odor and faster reoccupancy.</p>
+            </details>
+          </div>
+        </div>
+
+        <aside class="content-sidebar">
+          <CostCalculator client:visible />
+
+          <div class="sidebar-cta">
+            <h3>Related Services</h3>
+            <ul>
+              <li><a href="/services/exterior-painting">Exterior Painting</a></li>
+              <li><a href="/contact">Cabinet Refinishing</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 1.5rem;
+  }
+  .breadcrumbs a { color: var(--color-primary); }
+
+  .intro {
+    font-size: 1.1rem;
+    max-width: 700px;
+    color: var(--color-text-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .feature-list, .process-list {
+    padding-left: 1.25rem;
+    margin-bottom: 2rem;
+    color: var(--color-text-light);
+  }
+  .feature-list li, .process-list li { margin-bottom: 0.5rem; }
+  .process-list li { margin-bottom: 0.75rem; }
+
+  .faq-list { margin-bottom: 2rem; }
+  .faq-list details {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .faq-list summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+  .faq-list p {
+    margin-top: 0.75rem;
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+  }
+
+  .sidebar-cta {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .sidebar-cta ul { list-style: none; }
+  .sidebar-cta li { margin-bottom: 0.5rem; }
+
+  @media (max-width: 900px) {
+    .content-grid { grid-template-columns: 1fr; }
+  }
+</style>
